@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/ALGO-DAO-DApp/static/css/main.89104df1.chunk.css",
+    "main.js": "/ALGO-DAO-DApp/static/js/main.bb78a7f8.chunk.js",
+    "main.js.map": "/ALGO-DAO-DApp/static/js/main.bb78a7f8.chunk.js.map",
+    "runtime-main.js": "/ALGO-DAO-DApp/static/js/runtime-main.d8fdb58d.js",
+    "runtime-main.js.map": "/ALGO-DAO-DApp/static/js/runtime-main.d8fdb58d.js.map",
+    "static/css/2.7dc8bfae.chunk.css": "/ALGO-DAO-DApp/static/css/2.7dc8bfae.chunk.css",
+    "static/js/2.28cc5802.chunk.js": "/ALGO-DAO-DApp/static/js/2.28cc5802.chunk.js",
+    "static/js/2.28cc5802.chunk.js.map": "/ALGO-DAO-DApp/static/js/2.28cc5802.chunk.js.map",
+    "static/js/3.0398225a.chunk.js": "/ALGO-DAO-DApp/static/js/3.0398225a.chunk.js",
+    "static/js/3.0398225a.chunk.js.map": "/ALGO-DAO-DApp/static/js/3.0398225a.chunk.js.map",
+    "index.html": "/ALGO-DAO-DApp/index.html",
+    "static/css/2.7dc8bfae.chunk.css.map": "/ALGO-DAO-DApp/static/css/2.7dc8bfae.chunk.css.map",
+    "static/css/main.89104df1.chunk.css.map": "/ALGO-DAO-DApp/static/css/main.89104df1.chunk.css.map",
+    "static/js/2.28cc5802.chunk.js.LICENSE.txt": "/ALGO-DAO-DApp/static/js/2.28cc5802.chunk.js.LICENSE.txt",
+    "static/media/DAO.d4104a3f.jpg": "/ALGO-DAO-DApp/static/media/DAO.d4104a3f.jpg",
+    "static/media/bootstrap-icons.css": "/ALGO-DAO-DApp/static/media/bootstrap-icons.ea98e12d.woff2"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d8fdb58d.js",
+    "static/css/2.7dc8bfae.chunk.css",
+    "static/js/2.28cc5802.chunk.js",
+    "static/css/main.89104df1.chunk.css",
+    "static/js/main.bb78a7f8.chunk.js"
+  ]
+}
