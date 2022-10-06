@@ -16,7 +16,7 @@ This DAO contract:
 On deployment the contract has been set to 70 % approval and 6 mins for voting due to users wishing to test the dapp immediately.
 
 ### Contract Info
-This DApp is run by two contracts, the DAO contract [here](https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/contracts/dao_contract.py) and the Proposal contract (here)[https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/contracts/proposal_contract.py].
+This DApp is run by two contracts, the DAO contract [here](https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/contracts/dao_contract.py) and the Proposal contract [here](https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/contracts/proposal_contract.py).
 - Creating a proposal means, creating a new proposal contract, and the creator of contract, has to explicitly lock in the proposal amount in the DAO after creating the contrract before voting for that proposal can be done
 - Various checks are in place to ensure that a proposal can only be approved from the DAO contract appID, it was created with. If the Dao contract appID is changed, any action on proposal will fail.
 - Investors cannot create proposal with amounts that are more than the free funds in the the DAO contract. (free-funds = available_funds - locked_funds)
