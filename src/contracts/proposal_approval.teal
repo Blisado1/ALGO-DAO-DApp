@@ -1,0 +1,526 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l14
+txn OnCompletion
+int OptIn
+==
+bnz main_l13
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l12
+txna ApplicationArgs 0
+byte "lock"
+==
+bnz main_l11
+txna ApplicationArgs 0
+byte "execute"
+==
+bnz main_l8
+txna ApplicationArgs 0
+byte "end"
+==
+bnz main_l7
+err
+main_l7:
+global GroupSize
+int 3
+==
+txn GroupIndex
+int 2
+==
+&&
+gtxn 0 TypeEnum
+int appl
+==
+&&
+gtxn 0 ApplicationID
+global CurrentApplicationID
+==
+&&
+gtxn 0 OnCompletion
+int NoOp
+==
+&&
+gtxn 0 NumAppArgs
+int 1
+==
+&&
+gtxna 0 ApplicationArgs 0
+byte "execute"
+==
+&&
+gtxn 1 TypeEnum
+int appl
+==
+&&
+gtxn 1 ApplicationID
+byte "DAO"
+app_global_get
+==
+&&
+gtxn 1 OnCompletion
+int NoOp
+==
+&&
+gtxn 1 NumAppArgs
+int 1
+==
+&&
+gtxna 1 ApplicationArgs 0
+byte "fund"
+==
+&&
+byte "ISLOCKED"
+app_global_get
+int 1
+==
+&&
+global LatestTimestamp
+byte "ENDS"
+app_global_get
+>=
+&&
+byte "ENDED"
+app_global_get
+int 0
+==
+&&
+byte "EXECUTED"
+app_global_get
+int 1
+==
+&&
+assert
+byte "ENDED"
+int 1
+app_global_put
+int 1
+return
+main_l8:
+txna Accounts 0
+txna Applications 0
+app_opted_in
+global GroupSize
+int 3
+==
+&&
+txn GroupIndex
+int 0
+==
+&&
+txn NumApplications
+int 1
+==
+&&
+txna Applications 1
+byte "DAO"
+app_global_get
+==
+&&
+txna Accounts 0
+txna Applications 1
+app_opted_in
+&&
+txn NumAppArgs
+int 1
+==
+&&
+byte "ISLOCKED"
+app_global_get
+int 1
+==
+&&
+global LatestTimestamp
+byte "ENDS"
+app_global_get
+>=
+&&
+byte "ENDED"
+app_global_get
+int 0
+==
+&&
+byte "EXECUTED"
+app_global_get
+int 0
+==
+&&
+gtxn 1 TypeEnum
+int appl
+==
+&&
+gtxn 1 ApplicationID
+byte "DAO"
+app_global_get
+==
+&&
+gtxn 1 OnCompletion
+int NoOp
+==
+&&
+gtxn 1 NumAppArgs
+int 1
+==
+&&
+gtxna 1 ApplicationArgs 0
+byte "fund"
+==
+&&
+gtxn 1 NumApplications
+int 1
+==
+&&
+gtxna 1 Applications 1
+global CurrentApplicationID
+==
+&&
+gtxn 1 NumAccounts
+int 1
+==
+&&
+gtxna 1 Accounts 1
+byte "RECIPIENT"
+app_global_get
+==
+&&
+gtxn 1 Sender
+gtxn 0 Sender
+==
+&&
+gtxn 2 TypeEnum
+int appl
+==
+&&
+gtxn 2 ApplicationID
+global CurrentApplicationID
+==
+&&
+gtxn 2 OnCompletion
+int NoOp
+==
+&&
+gtxn 2 NumAppArgs
+int 1
+==
+&&
+gtxna 2 ApplicationArgs 0
+byte "end"
+==
+&&
+gtxn 2 Sender
+gtxn 0 Sender
+==
+&&
+assert
+txna Applications 1
+byte "SHARES"
+callsub readAppState_0
+store 5
+txna Applications 1
+byte "QUORUM"
+callsub readAppState_0
+store 6
+load 5
+int 0
+>
+load 6
+int 0
+>
+&&
+assert
+byte "VOTES"
+app_global_get
+load 5
+/
+int 100
+*
+load 6
+>=
+bnz main_l10
+main_l9:
+byte "EXECUTED"
+int 1
+app_global_put
+int 1
+return
+main_l10:
+byte "SUCCESS"
+int 1
+app_global_put
+b main_l9
+main_l11:
+global GroupSize
+int 2
+==
+txn GroupIndex
+int 0
+==
+&&
+txn NumApplications
+int 1
+==
+&&
+txna Applications 1
+byte "DAO"
+app_global_get
+==
+&&
+txna Accounts 0
+txna Applications 1
+app_opted_in
+&&
+gtxn 0 Sender
+global CreatorAddress
+==
+&&
+byte "ISLOCKED"
+app_global_get
+int 0
+==
+&&
+gtxn 1 TypeEnum
+int appl
+==
+&&
+gtxn 1 ApplicationID
+byte "DAO"
+app_global_get
+==
+&&
+gtxn 1 OnCompletion
+int NoOp
+==
+&&
+gtxn 1 NumApplications
+int 1
+==
+&&
+gtxna 1 Applications 1
+global CurrentApplicationID
+==
+&&
+gtxn 1 NumAppArgs
+int 1
+==
+&&
+gtxna 1 ApplicationArgs 0
+byte "lock"
+==
+&&
+gtxn 1 Sender
+gtxn 0 Sender
+==
+&&
+assert
+txna Applications 1
+byte "TIME"
+callsub readAppState_0
+store 4
+load 4
+int 0
+>
+assert
+byte "ISLOCKED"
+int 1
+app_global_put
+byte "ENDS"
+global LatestTimestamp
+load 4
++
+app_global_put
+int 1
+return
+main_l12:
+txn Sender
+global CreatorAddress
+==
+byte "ENDED"
+app_global_get
+int 1
+==
+&&
+return
+main_l13:
+txn NumApplications
+int 1
+==
+txna Applications 1
+byte "DAO"
+app_global_get
+==
+&&
+txna Accounts 0
+txna Applications 1
+app_opted_in
+&&
+txna Accounts 0
+byte "VOTESTATUS"
+app_local_get
+int 0
+==
+&&
+byte "ISLOCKED"
+app_global_get
+int 1
+==
+&&
+global LatestTimestamp
+byte "ENDS"
+app_global_get
+<=
+&&
+assert
+txna Accounts 0
+txna Applications 1
+callsub getUserShares_1
+store 3
+load 3
+int 0
+>
+assert
+byte "VOTES"
+app_global_get
+store 2
+byte "VOTES"
+load 2
+load 3
++
+app_global_put
+txna Accounts 0
+byte "VOTESTATUS"
+int 1
+app_local_put
+int 1
+return
+main_l14:
+txn Note
+byte "algodaoproposal:uv02"
+==
+txn NumApplications
+int 1
+==
+&&
+txna Accounts 0
+txna Applications 1
+app_opted_in
+&&
+txna Applications 1
+int 114731548
+==
+&&
+txn NumAppArgs
+int 2
+==
+&&
+txn NumAccounts
+int 1
+==
+&&
+txna ApplicationArgs 1
+btoi
+int 1000000
+>=
+&&
+assert
+txna Applications 1
+byte "LOCKED"
+callsub readAppState_0
+store 0
+txna Applications 1
+byte "AVAILABLE"
+callsub readAppState_0
+store 1
+load 0
+int 0
+>=
+load 1
+int 0
+>
+&&
+txna ApplicationArgs 1
+btoi
+load 1
+load 0
+-
+<=
+&&
+assert
+byte "DAO"
+txna Applications 1
+app_global_put
+byte "NAME"
+txna ApplicationArgs 0
+app_global_put
+byte "RECIPIENT"
+txna Accounts 1
+app_global_put
+byte "AMOUNT"
+txna ApplicationArgs 1
+btoi
+app_global_put
+byte "ENDS"
+int 0
+app_global_put
+byte "VOTES"
+int 0
+app_global_put
+byte "ISLOCKED"
+int 0
+app_global_put
+byte "EXECUTED"
+int 0
+app_global_put
+byte "SUCCESS"
+int 0
+app_global_put
+byte "ENDED"
+int 0
+app_global_put
+int 1
+return
+
+// readAppState
+readAppState_0:
+store 8
+store 7
+load 7
+load 8
+app_global_get_ex
+store 10
+store 9
+load 10
+bnz readAppState_0_l2
+int 0
+store 11
+b readAppState_0_l3
+readAppState_0_l2:
+load 9
+store 11
+readAppState_0_l3:
+load 11
+retsub
+
+// getUserShares
+getUserShares_1:
+store 13
+store 12
+load 12
+load 13
+byte "USHARES"
+app_local_get_ex
+store 15
+store 14
+load 15
+bnz getUserShares_1_l2
+int 0
+store 16
+b getUserShares_1_l3
+getUserShares_1_l2:
+load 14
+store 16
+getUserShares_1_l3:
+load 16
+retsub

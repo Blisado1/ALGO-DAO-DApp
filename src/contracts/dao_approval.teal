@@ -1,0 +1,674 @@
+#pragma version 6
+txn ApplicationID
+int 0
+==
+bnz main_l23
+txn OnCompletion
+int DeleteApplication
+==
+bnz main_l22
+txn OnCompletion
+int OptIn
+==
+bnz main_l21
+txna ApplicationArgs 0
+byte "contribute"
+==
+bnz main_l15
+txna ApplicationArgs 0
+byte "transfer"
+==
+bnz main_l14
+txna ApplicationArgs 0
+byte "redeem"
+==
+bnz main_l13
+txna ApplicationArgs 0
+byte "lock"
+==
+bnz main_l12
+txna ApplicationArgs 0
+byte "fund"
+==
+bnz main_l9
+err
+main_l9:
+global GroupSize
+int 3
+==
+txn GroupIndex
+int 1
+==
+&&
+txn NumAccounts
+int 1
+==
+&&
+txn NumApplications
+int 1
+==
+&&
+gtxn 0 TypeEnum
+int appl
+==
+&&
+gtxn 0 ApplicationID
+txna Applications 1
+==
+&&
+gtxn 0 OnCompletion
+int NoOp
+==
+&&
+gtxn 0 NumAppArgs
+int 1
+==
+&&
+gtxna 0 ApplicationArgs 0
+byte "execute"
+==
+&&
+gtxn 2 TypeEnum
+int appl
+==
+&&
+gtxn 2 ApplicationID
+txna Applications 1
+==
+&&
+gtxn 2 OnCompletion
+int NoOp
+==
+&&
+gtxn 2 NumAppArgs
+int 1
+==
+&&
+gtxna 2 ApplicationArgs 0
+byte "end"
+==
+&&
+assert
+txna Applications 1
+byte "DAO"
+callsub readAppState_1
+store 12
+txna Applications 1
+byte "AMOUNT"
+callsub readAppState_1
+store 8
+txna Applications 1
+byte "SUCCESS"
+callsub readAppState_1
+store 9
+txna Applications 1
+byte "EXECUTED"
+callsub readAppState_1
+store 11
+txna Applications 1
+byte "ENDED"
+callsub readAppState_1
+store 10
+txna Applications 1
+byte "ISLOCKED"
+callsub readAppState_1
+store 13
+txna Applications 1
+callsub getProposalRecipient_2
+store 14
+load 12
+global CurrentApplicationID
+==
+load 11
+int 1
+==
+&&
+load 10
+int 0
+==
+&&
+load 8
+int 0
+>
+&&
+load 8
+byte "LOCKED"
+app_global_get
+<=
+&&
+load 8
+byte "AVAILABLE"
+app_global_get
+<=
+&&
+load 14
+txna Accounts 1
+==
+&&
+load 13
+int 1
+==
+&&
+assert
+load 9
+int 1
+==
+bnz main_l11
+main_l10:
+byte "LOCKED"
+byte "LOCKED"
+app_global_get
+load 8
+-
+app_global_put
+int 1
+return
+main_l11:
+txn Fee
+global MinTxnFee
+int 3
+*
+>=
+assert
+txna Accounts 1
+load 8
+callsub sendfunds_0
+byte "AVAILABLE"
+byte "AVAILABLE"
+app_global_get
+load 8
+-
+app_global_put
+b main_l10
+main_l12:
+txna Accounts 0
+txna Applications 0
+app_opted_in
+global GroupSize
+int 2
+==
+&&
+txn GroupIndex
+int 1
+==
+&&
+gtxn 0 TypeEnum
+int appl
+==
+&&
+gtxna 0 ApplicationArgs 0
+byte "lock"
+==
+&&
+txn NumAppArgs
+int 1
+==
+&&
+txn NumApplications
+int 1
+==
+&&
+assert
+txna Applications 1
+byte "AMOUNT"
+callsub readAppState_1
+store 7
+load 7
+int 0
+>
+load 7
+byte "AVAILABLE"
+app_global_get
+byte "LOCKED"
+app_global_get
+-
+<=
+&&
+assert
+byte "LOCKED"
+byte "LOCKED"
+app_global_get
+load 7
++
+app_global_put
+int 1
+return
+main_l13:
+txna Accounts 0
+txna Applications 0
+app_opted_in
+txn NumAppArgs
+int 2
+==
+&&
+txna ApplicationArgs 1
+btoi
+txna Accounts 0
+byte "USHARES"
+app_local_get
+<=
+&&
+txna ApplicationArgs 1
+btoi
+byte "AVAILABLE"
+app_global_get
+byte "LOCKED"
+app_global_get
+-
+<=
+&&
+txna ApplicationArgs 1
+btoi
+int 0
+>
+&&
+txn Fee
+global MinTxnFee
+int 2
+*
+>=
+&&
+assert
+txna Accounts 0
+txna ApplicationArgs 1
+btoi
+callsub sendfunds_0
+txna Accounts 0
+byte "USHARES"
+txna Accounts 0
+byte "USHARES"
+app_local_get
+txna ApplicationArgs 1
+btoi
+-
+app_local_put
+byte "SHARES"
+byte "SHARES"
+app_global_get
+txna ApplicationArgs 1
+btoi
+-
+app_global_put
+byte "AVAILABLE"
+byte "AVAILABLE"
+app_global_get
+txna ApplicationArgs 1
+btoi
+-
+app_global_put
+int 1
+return
+main_l14:
+txn NumAccounts
+int 1
+==
+txna Accounts 0
+txna Applications 0
+app_opted_in
+&&
+txna Accounts 1
+txna Applications 0
+app_opted_in
+&&
+txn NumAppArgs
+int 2
+==
+&&
+txna ApplicationArgs 1
+btoi
+txna Accounts 0
+byte "USHARES"
+app_local_get
+<=
+&&
+txna ApplicationArgs 1
+btoi
+int 0
+>
+&&
+assert
+txna Accounts 0
+byte "USHARES"
+txna Accounts 0
+byte "USHARES"
+app_local_get
+txna ApplicationArgs 1
+btoi
+-
+app_local_put
+txna Accounts 1
+byte "USHARES"
+txna Accounts 1
+byte "USHARES"
+app_local_get
+txna ApplicationArgs 1
+btoi
++
+app_local_put
+int 1
+return
+main_l15:
+global GroupSize
+int 3
+==
+bnz main_l20
+global GroupSize
+int 2
+==
+bnz main_l18
+err
+main_l18:
+txna Accounts 0
+txna Applications 0
+app_opted_in
+txn GroupIndex
+int 0
+==
+&&
+txn NumAppArgs
+int 2
+==
+&&
+txna ApplicationArgs 1
+btoi
+int 1000000
+>=
+&&
+gtxn 1 TypeEnum
+int pay
+==
+&&
+gtxn 1 Receiver
+global CurrentApplicationAddress
+==
+&&
+gtxn 1 CloseRemainderTo
+global ZeroAddress
+==
+&&
+gtxn 1 Amount
+txna ApplicationArgs 1
+btoi
+==
+&&
+gtxn 1 Sender
+gtxn 0 Sender
+==
+&&
+assert
+txna Accounts 0
+byte "USHARES"
+app_local_get
+store 4
+txna Accounts 0
+byte "USHARES"
+load 4
+txna ApplicationArgs 1
+btoi
++
+app_local_put
+byte "AVAILABLE"
+app_global_get
+store 6
+byte "SHARES"
+app_global_get
+store 5
+byte "SHARES"
+load 5
+txna ApplicationArgs 1
+btoi
++
+app_global_put
+byte "AVAILABLE"
+load 6
+txna ApplicationArgs 1
+btoi
++
+app_global_put
+int 1
+return
+int 1
+return
+main_l20:
+txn GroupIndex
+int 1
+==
+gtxn 0 TypeEnum
+int appl
+==
+&&
+gtxn 0 OnCompletion
+int OptIn
+==
+&&
+txn NumAppArgs
+int 2
+==
+&&
+txna ApplicationArgs 1
+btoi
+int 1000000
+>=
+&&
+gtxn 2 TypeEnum
+int pay
+==
+&&
+gtxn 2 Receiver
+global CurrentApplicationAddress
+==
+&&
+gtxn 2 Amount
+gtxna 1 ApplicationArgs 1
+btoi
+==
+&&
+assert
+txna Accounts 0
+byte "USHARES"
+app_local_get
+store 1
+txna Accounts 0
+byte "USHARES"
+load 1
+txna ApplicationArgs 1
+btoi
++
+app_local_put
+byte "AVAILABLE"
+app_global_get
+store 3
+byte "SHARES"
+app_global_get
+store 2
+byte "SHARES"
+load 2
+txna ApplicationArgs 1
+btoi
++
+app_global_put
+byte "AVAILABLE"
+load 3
+txna ApplicationArgs 1
+btoi
++
+app_global_put
+int 1
+return
+main_l21:
+global GroupSize
+int 3
+==
+assert
+txn GroupIndex
+int 0
+==
+assert
+gtxn 1 TypeEnum
+int appl
+==
+assert
+gtxn 1 ApplicationID
+global CurrentApplicationID
+==
+assert
+gtxna 1 ApplicationArgs 0
+byte "contribute"
+==
+assert
+gtxn 1 OnCompletion
+int NoOp
+==
+assert
+gtxn 1 Sender
+gtxn 0 Sender
+==
+assert
+gtxn 2 TypeEnum
+int pay
+==
+assert
+gtxn 2 Receiver
+global CurrentApplicationAddress
+==
+assert
+gtxn 2 CloseRemainderTo
+global ZeroAddress
+==
+assert
+gtxn 2 Amount
+int 1000000
+>=
+assert
+gtxn 2 Sender
+gtxn 0 Sender
+==
+assert
+byte "INVESTORS"
+app_global_get
+store 0
+byte "INVESTORS"
+load 0
+int 1
++
+app_global_put
+txna Accounts 0
+byte "USERID"
+load 0
+int 1
++
+app_local_put
+txna Accounts 0
+byte "USHARES"
+int 0
+app_local_put
+int 1
+return
+main_l22:
+txn Sender
+global CreatorAddress
+==
+return
+main_l23:
+txn Note
+byte "algodao:uv01"
+==
+txn NumAppArgs
+int 2
+==
+&&
+txna ApplicationArgs 0
+btoi
+int 0
+>
+txna ApplicationArgs 0
+btoi
+int 100
+<
+&&
+&&
+txna ApplicationArgs 1
+btoi
+int 0
+>
+&&
+assert
+byte "QUORUM"
+txna ApplicationArgs 0
+btoi
+app_global_put
+byte "TIME"
+txna ApplicationArgs 1
+btoi
+app_global_put
+byte "SHARES"
+int 0
+app_global_put
+byte "AVAILABLE"
+int 0
+app_global_put
+byte "LOCKED"
+int 0
+app_global_put
+byte "INVESTORS"
+int 0
+app_global_put
+int 1
+return
+
+// send_funds
+sendfunds_0:
+store 16
+store 15
+itxn_begin
+int pay
+itxn_field TypeEnum
+load 15
+itxn_field Receiver
+load 16
+itxn_field Amount
+int 0
+itxn_field Fee
+itxn_submit
+retsub
+
+// readAppState
+readAppState_1:
+store 18
+store 17
+load 17
+load 18
+app_global_get_ex
+store 20
+store 19
+load 20
+bnz readAppState_1_l2
+int 0
+store 21
+b readAppState_1_l3
+readAppState_1_l2:
+load 19
+store 21
+readAppState_1_l3:
+load 21
+retsub
+
+// getProposalRecipient
+getProposalRecipient_2:
+store 22
+load 22
+byte "RECIPIENT"
+app_global_get_ex
+store 24
+store 23
+load 24
+bnz getProposalRecipient_2_l2
+byte "0"
+store 25
+b getProposalRecipient_2_l3
+getProposalRecipient_2_l2:
+load 23
+store 25
+getProposalRecipient_2_l3:
+load 25
+retsub
