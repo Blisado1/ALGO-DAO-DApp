@@ -38,4 +38,4 @@ venv
 __pycache__
 *.pyc
 
-.wallet
+passkey
