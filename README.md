@@ -16,7 +16,7 @@ This DAO contract:
 On deployment the contract has been set to 70 % approval and 6 mins for voting due to users wishing to test the dapp immediately.
 
 ### Contract Info
-This DApp is run by two contracts, the DAO contract [here](#) and the Proposal contract (here)[#].
+This DApp is run by two contracts, the DAO contract [here](https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/contracts/dao_contract.py) and the Proposal contract (here)[https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/contracts/proposal_contract.py].
 - Creating a proposal means, creating a new proposal contract, and the creator of contract, has to explicitly lock in the proposal amount in the DAO after creating the contrract before voting for that proposal can be done
 - Various checks are in place to ensure that a proposal can only be approved from the DAO contract appID, it was created with. If the Dao contract appID is changed, any action on proposal will fail.
 - Investors cannot create proposal with amounts that are more than the free funds in the the DAO contract. (free-funds = available_funds - locked_funds)
@@ -84,7 +84,7 @@ simply open an issue with the tag "enhancement". Don't forget to give the projec
 
 ## Development
 ### Creating a new DAO contract
-- A new DAO contract can be created only in development, replace the value of the `daoAppId` in the constants.js [file](#) with 0 and a file icon should appear under the daoDapp logo and on clicking that a form for creating a new dao should appear.
+- A new DAO contract can be created only in development, replace the value of the `daoAppId` in the constants.js [file](https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/utils/constants.js#L59) with 0 and a file icon should appear under the daoDapp logo and on clicking that a form for creating a new dao should appear.
 
 ![file icon](./src/assets/img/image1.png)
 
@@ -92,7 +92,7 @@ simply open an issue with the tag "enhancement". Don't forget to give the projec
 
 - After completing the form, open the console and copy the appId outputed and save it as the value of the `daoAppId`.
 
-NOTE: You'll also need to edit the proposals.py [file](#) or the proposal_approval.teal [file](#) to contain the new value of the dao app ID.
+NOTE: You'll also need to edit the proposals.py file [here](https://github.com/Blisado1/ALGO-DAO-DApp/blob/2f2ed46b4f4e60b98c9919429bd3fddd4660c0d8/src/contracts/proposal_contract.py#L41) or the proposal_approval.teal file [here](https://github.com/Blisado1/ALGO-DAO-DApp/blob/main/src/contracts/proposal_approval.teal#L411) to contain the new value of the dao app ID.
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
