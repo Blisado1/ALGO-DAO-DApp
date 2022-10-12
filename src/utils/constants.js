@@ -27,8 +27,8 @@ export const myAlgoConnect = new MyAlgoConnect();
 export const minRound = 21540981;
 
 // https://github.com/algorandfoundation/ARCs/blob/main/ARCs/arc-0002.md
-export const daoNote = "algodao:uv01";
-export const proposalNote = "algodaoproposal:uv02";
+export const daoNote = "algodao:uv02";
+export const proposalNote = "algodaoproposal:uv03";
 
 //DAO
 // Maximum local storage allocation, immutable
@@ -56,4 +56,4 @@ export const numGlobalBytesProposal = 2;
 export const ALGORAND_DECIMALS = 6;
 
 // App Id of Dao
-export const daoAppId = 114731548;
+export const daoAppId = 115840105;

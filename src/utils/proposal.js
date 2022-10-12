@@ -244,7 +244,7 @@ export const executeProposalAction = async (
   console.log("Executing proposal...");
 
   let params = await algo.algodClient.getTransactionParams().do();
-  params.fee = algosdk.ALGORAND_MIN_TX_FEE * 3;
+  params.fee = algosdk.ALGORAND_MIN_TX_FEE * 2;
   params.flatFee = true;
 
   let executeArg = new TextEncoder().encode("execute");

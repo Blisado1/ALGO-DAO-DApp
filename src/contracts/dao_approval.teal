@@ -136,11 +136,6 @@ byte "LOCKED"
 app_global_get
 <=
 &&
-load 8
-byte "AVAILABLE"
-app_global_get
-<=
-&&
 load 14
 txna Accounts 1
 ==
@@ -166,15 +161,15 @@ return
 main_l11:
 txn Fee
 global MinTxnFee
-int 3
+int 2
 *
 >=
 assert
 txna Accounts 1
 load 8
 callsub sendfunds_0
-byte "AVAILABLE"
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
+byte "CONTRIBUTIONS"
 app_global_get
 load 8
 -
@@ -217,7 +212,7 @@ load 7
 int 0
 >
 load 7
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 app_global_get
 byte "LOCKED"
 app_global_get
@@ -250,7 +245,7 @@ app_local_get
 &&
 txna ApplicationArgs 1
 btoi
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 app_global_get
 byte "LOCKED"
 app_global_get
@@ -289,8 +284,8 @@ txna ApplicationArgs 1
 btoi
 -
 app_global_put
-byte "AVAILABLE"
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
+byte "CONTRIBUTIONS"
 app_global_get
 txna ApplicationArgs 1
 btoi
@@ -407,7 +402,7 @@ txna ApplicationArgs 1
 btoi
 +
 app_local_put
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 app_global_get
 store 6
 byte "SHARES"
@@ -419,7 +414,7 @@ txna ApplicationArgs 1
 btoi
 +
 app_global_put
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 load 6
 txna ApplicationArgs 1
 btoi
@@ -475,7 +470,7 @@ txna ApplicationArgs 1
 btoi
 +
 app_local_put
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 app_global_get
 store 3
 byte "SHARES"
@@ -487,7 +482,7 @@ txna ApplicationArgs 1
 btoi
 +
 app_global_put
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 load 3
 txna ApplicationArgs 1
 btoi
@@ -571,7 +566,7 @@ global CreatorAddress
 return
 main_l23:
 txn Note
-byte "algodao:uv01"
+byte "algodao:uv02"
 ==
 txn NumAppArgs
 int 2
@@ -604,7 +599,7 @@ app_global_put
 byte "SHARES"
 int 0
 app_global_put
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 int 0
 app_global_put
 byte "LOCKED"

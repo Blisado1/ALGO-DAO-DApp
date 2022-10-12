@@ -134,7 +134,14 @@ const Proposals = ({
                     scope="row"
                     sx={{ color: "#aec1c5" }}
                   >
-                    {proposal.appId}
+                    {" "}
+                    <a
+                      href={`https://testnet.algoexplorer.io/application/${proposal.appId}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {proposal.appId}
+                    </a>
                   </TableCell>
                   <TableCell align="center" sx={{ color: "#aec1c5" }}>
                     {proposal.name}
