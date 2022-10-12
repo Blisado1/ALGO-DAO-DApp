@@ -6,7 +6,6 @@ import { Container } from "@mui/system";
 import { Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
-import { NotificationSuccess, NotificationError } from "../utils/Notifications";
 import Loader from "../utils/Loader";
 import Header from "./Header";
 import Contribute from "./Contribute";
@@ -40,6 +39,7 @@ const Dao = ({ address, name, disconnect }) => {
     setLoading(true);
     getDaoDataAction(address)
       .then((dao) => {
+        toast.loading("Getting Dao Data");
         if (dao) {
           setDaoData(dao);
         }
@@ -51,6 +51,7 @@ const Dao = ({ address, name, disconnect }) => {
 
   const getProposals = useCallback(async () => {
     setLoading(true);
+    toast.loading("Getting Proposals");
     getProposalsAction(address)
       .then((proposals) => {
         if (proposals) {
@@ -62,8 +63,15 @@ const Dao = ({ address, name, disconnect }) => {
       })
       .finally((_) => {
         setLoading(false);
+        toast.dismiss();
       });
   }, [address]);
+
+  async function update() {
+    getDaoData();
+    getProposals();
+    fetchBalance();
+  }
 
   const fetchBalance = useCallback(async () => {
     indexerClient
@@ -80,127 +88,153 @@ const Dao = ({ address, name, disconnect }) => {
 
   const createDao = async (data) => {
     setLoading(true);
+    toast.loading("Creating Dao Contract");
     createDaoAction(address, data)
       .then(() => {
-        toast(<NotificationSuccess text=" DAO created successfully." />);
-        getDaoData();
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("DAO created successfully.");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         console.log(error);
-        toast(<NotificationError text=" Failed to create DAO." />);
+        toast.dismiss();
+        toast.error("Failed to create DAO.");
         setLoading(false);
       });
   };
 
   const contributeToDAO = async (amount) => {
     setLoading(true);
+    toast.loading("Sending contributions to Dao");
     contributeToDaoAction(address, daoData, amount)
       .then(() => {
-        toast(<NotificationSuccess text=" Contribution added successfully." />);
-        getDaoData();
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("Contribution added successfully.");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         setLoading(false);
+        toast.dismiss();
+        toast.error("Failed to contribution.");
         console.log(error);
-        toast(<NotificationError text=" Failed to contribution." />);
       });
   };
 
   const redeemShares = async (amount) => {
     setLoading(true);
+    toast.loading("Redeeming shares from Dao");
     redeemSharesAction(address, daoData, amount)
       .then(() => {
-        toast(<NotificationSuccess text=" Shares redeemed successfully." />);
-        getDaoData();
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("Shares redeemed successfully.");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
-        toast(<NotificationError text=" Failed to redeem shares." />);
+        toast.dismiss();
+        toast.success("Failed to redeem shares.");
       });
   };
 
   const transferShares = async (data) => {
     setLoading(true);
+    toast.loading("Transfering shares");
     transferSharesAction(address, daoData, data)
       .then(() => {
-        toast(<NotificationSuccess text=" Shares transferred successfully." />);
-        getDaoData();
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("Shares transferred successfully.");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
-        toast(<NotificationError text=" Failed to transfer shares." />);
+        toast.dismiss();
+        toast.error("Failed to transfer shares.");
       });
   };
 
   const createProposal = async (data) => {
     setLoading(true);
+    toast.loading("Creating new proposal");
     createProposalAction(address, data, daoData)
       .then(() => {
-        toast(<NotificationSuccess text=" Proposal added successfully." />);
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("Proposal added successfully.");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
-        toast(<NotificationError text=" Failed to add proposal." />);
+        toast.dismiss();
+        toast.error("Failed to add proposal.");
       });
   };
 
   const lockInProposal = async (proposal) => {
     setLoading(true);
+    toast.loading("Locking-in proposal");
     lockInProposalAction(address, proposal, daoData)
       .then(() => {
-        toast(<NotificationSuccess text=" Proposal locked-in  Dao ." />);
-        getDaoData();
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("Proposal locked-in  Dao .");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
-        toast(<NotificationError text=" Failed to lock-in proposal." />);
+        toast.dismiss();
+        toast.error("Failed to lock-in proposal.");
       });
   };
 
   const voteProposal = async (proposal) => {
     setLoading(true);
+    toast.loading("Sending your vote");
     voteAction(address, proposal, daoData)
       .then(() => {
-        toast(<NotificationSuccess text=" Vote successful." />);
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("Vote successful.");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
-        toast(<NotificationError text=" Vote failed." />);
+        toast.dismiss();
+        toast.error("Vote failed.");
       });
   };
 
   const executeProposal = async (proposal) => {
     setLoading(true);
+    toast.loading("Executing proposal");
     executeProposalAction(address, proposal, daoData)
       .then(() => {
-        toast(<NotificationSuccess text=" Proposal executed successfully." />);
-        getDaoData();
-        getProposals();
-        fetchBalance();
+        toast.dismiss();
+        toast.success("Proposal executed successfully.");
+        setTimeout(() => {
+          update();
+        }, 3000);
       })
       .catch((error) => {
         setLoading(false);
         console.log(error);
-        toast(<NotificationError text=" Failed to execute proposal." />);
+        toast.dismiss();
+        toast.error("Failed to execute proposal.");
       });
   };
 

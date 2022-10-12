@@ -1,4 +1,3 @@
-from pickle import GLOBAL
 from pyteal import *
 from helpers import *
 
@@ -8,7 +7,7 @@ class Dao_Contract:
     class Global_Variables:  # 6 global ints # 0 global bytes
         quorum = Bytes("QUORUM")  # uint64
         total_shares = Bytes("SHARES")  # uint64
-        available_funds = Bytes("AVAILABLE")  # uint64
+        total_contributions = Bytes("CONTRIBUTIONS")  # uint64
         locked_funds = Bytes("LOCKED")  # uint64
         vote_time = Bytes("TIME")  # uint64
         no_of_investors = Bytes("INVESTORS")  # uint64
@@ -33,7 +32,7 @@ class Dao_Contract:
                 Assert(
                     And(
                         # check note attached is valid
-                        Txn.note() == Bytes("algodao:uv01"),
+                        Txn.note() == Bytes("algodao:uv02"),
                         # check the number of arguments passed is 2, quorum, vote_time
                         Txn.application_args.length() == Int(2),
                         # check that the quorum is greater than 0 but less than 100
@@ -55,7 +54,8 @@ class Dao_Contract:
                         Txn.application_args[1])
                 ),
                 App.globalPut(self.Global_Variables.total_shares, Int(0)),
-                App.globalPut(self.Global_Variables.available_funds, Int(0)),
+                App.globalPut(
+                    self.Global_Variables.total_contributions, Int(0)),
                 App.globalPut(self.Global_Variables.locked_funds, Int(0)),
                 App.globalPut(self.Global_Variables.no_of_investors, Int(0)),
                 Approve(),
@@ -120,7 +120,7 @@ class Dao_Contract:
         # arguments, arg 0 is buy tag, second arg is the amount
         user_shares = ScratchVar(TealType.uint64)
         total_shares = ScratchVar(TealType.uint64)
-        available_funds = ScratchVar(TealType.uint64)
+        total_contributions = ScratchVar(TealType.uint64)
 
         return Seq(
             [
@@ -136,9 +136,9 @@ class Dao_Contract:
                         Txn.application_args[1])
                 ),
 
-                # get available funds and total shares
-                available_funds.store(
-                    App.globalGet(self.Global_Variables.available_funds)
+                # get total contributions and total shares
+                total_contributions.store(
+                    App.globalGet(self.Global_Variables.total_contributions)
                 ),
 
                 total_shares.store(
@@ -152,8 +152,9 @@ class Dao_Contract:
                 ),
 
                 App.globalPut(
-                    self.Global_Variables.available_funds,
-                    (available_funds.load() + Btoi(Txn.application_args[1]))
+                    self.Global_Variables.total_contributions,
+                    (total_contributions.load() + \
+                     Btoi(Txn.application_args[1]))
                 ),
             ]
         )
@@ -245,13 +246,14 @@ class Dao_Contract:
 
         updated_user_shares = user_shares - Btoi(Txn.application_args[1])
 
-        available_funds = App.globalGet(self.Global_Variables.available_funds)
+        total_contributions = App.globalGet(
+            self.Global_Variables.total_contributions)
 
-        free_funds = (available_funds -
-                      App.globalGet(self.Global_Variables.locked_funds))
+        available_funds = (total_contributions -
+                           App.globalGet(self.Global_Variables.locked_funds))
 
-        updated_available_funds = (
-            available_funds - Btoi(Txn.application_args[1]))
+        updated_total_contributions = (
+            total_contributions - Btoi(Txn.application_args[1]))
 
         updated_total_shares = App.globalGet(
             self.Global_Variables.total_shares) - Btoi(Txn.application_args[1])
@@ -270,7 +272,7 @@ class Dao_Contract:
                         Btoi(Txn.application_args[1]) <= user_shares,
 
                         # check that the amount is less than the available funds in the contract
-                        Btoi(Txn.application_args[1]) <= free_funds,
+                        Btoi(Txn.application_args[1]) <= available_funds,
 
                         # check that the amount is greater than zero
                         Btoi(Txn.application_args[1]) > Int(0),
@@ -296,8 +298,8 @@ class Dao_Contract:
                 ),
 
                 App.globalPut(
-                    self.Global_Variables.available_funds,
-                    updated_available_funds
+                    self.Global_Variables.total_contributions,
+                    updated_total_contributions
                 ),
 
                 Approve(),
@@ -365,10 +367,10 @@ class Dao_Contract:
 
         locked_funds = App.globalGet(self.Global_Variables.locked_funds)
 
-        available_funds = App.globalGet(
-            self.Global_Variables.available_funds)
+        total_contributions = App.globalGet(
+            self.Global_Variables.total_contributions)
 
-        free_funds = available_funds - locked_funds
+        available_funds = total_contributions - locked_funds
 
         updated_locked_funds = locked_funds + proposal_amount.load()
 
@@ -401,11 +403,11 @@ class Dao_Contract:
                     readAppState(Txn.applications[1], Bytes("AMOUNT"))
                 ),
 
-                # check again if proposal amount is valid, and can be locked
+                # check again if proposal amount is valid, and also if proposal amount is less than available funds in the dao
                 Assert(
                     And(
                         proposal_amount.load() > Int(0),
-                        proposal_amount.load() <= free_funds,
+                        proposal_amount.load() <= available_funds,
                     )
                 ),
 
@@ -428,8 +430,9 @@ class Dao_Contract:
         proposal_recipient = ScratchVar(TealType.bytes)
 
         locked_funds = App.globalGet(self.Global_Variables.locked_funds)
-        available_funds = App.globalGet(self.Global_Variables.available_funds)
-        updated_available_funds = available_funds - proposal_amount.load()
+        total_contributions = App.globalGet(
+            self.Global_Variables.total_contributions)
+        updated_total_contributions = total_contributions - proposal_amount.load()
         updated_locked_funds = locked_funds - proposal_amount.load()
         return Seq(
             [
@@ -503,8 +506,6 @@ class Dao_Contract:
                         proposal_amount.load() > Int(0),
                         # check if amount is less than amount in locked funds
                         proposal_amount.load() <= locked_funds,
-                        # check if amount is less than amount in available funds
-                        proposal_amount.load() <= available_funds,
                         # check if recipient passed in via the accounts array is equal to the proposal recipient
                         proposal_recipient.load() == Txn.accounts[1],
                         # check if proposal amount was locked
@@ -516,14 +517,14 @@ class Dao_Contract:
                 .Then(
                     Seq(
                         # for transaction pooling
-                        Assert(Txn.fee() >= Global.min_txn_fee() * Int(3)),
+                        Assert(Txn.fee() >= Global.min_txn_fee() * Int(2)),
                         # send proposal amount
                         send_funds(
                             Txn.accounts[1], (proposal_amount.load())),
 
                         # update available funds
                         App.globalPut(
-                            self.Global_Variables.available_funds, updated_available_funds),
+                            self.Global_Variables.total_contributions, updated_total_contributions),
                     )
                 ),
 

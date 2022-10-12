@@ -25,20 +25,20 @@ class Proposal_Contract:
 
     def create_proposal(self):
         locked_funds = ScratchVar(TealType.uint64)
-        available_funds = ScratchVar(TealType.uint64)
-        free_funds = available_funds.load() - locked_funds.load()
+        total_contributions = ScratchVar(TealType.uint64)
+        available_funds = total_contributions.load() - locked_funds.load()
         return Seq(
             [
                 Assert(
                     And(
                         # check note attached is valid
-                        Txn.note() == Bytes("algodaoproposal:uv02"),
+                        Txn.note() == Bytes("algodaoproposal:uv03"),
                         # check that the app id of the algodao is passed
                         Txn.applications.length() == Int(1),
                         # check that user has opted in to dao contract
                         App.optedIn(Txn.accounts[0], Txn.applications[1]),
                         # check that pass app Id is equal to the algodao id
-                        Txn.applications[1] == Int(114731548),
+                        Txn.applications[1] == Int(115840105),
                         # check the number of arguments passed is 2, name, amount
                         Txn.application_args.length() == Int(2),
                         # recipient is passed in via the accounts array,
@@ -48,15 +48,15 @@ class Proposal_Contract:
                     )
                 ),
                 locked_funds.store(readAppState(Txn.applications[1], Bytes("LOCKED"))),
-                available_funds.store(
-                    readAppState(Txn.applications[1], Bytes("AVAILABLE"))
+                total_contributions.store(
+                    readAppState(Txn.applications[1], Bytes("CONTRIBUTIONS"))
                 ),
-                # check that the amount is lower than the free funds in the dao
+                # check that the amount is lower than the available funds in the dao
                 Assert(
                     And(
                         locked_funds.load() >= Int(0),
-                        available_funds.load() > Int(0),
-                        Btoi(Txn.application_args[1]) <= free_funds,
+                        total_contributions.load() > Int(0),
+                        Btoi(Txn.application_args[1]) <= available_funds,
                     )
                 ),
                 # store ID of algo dapp

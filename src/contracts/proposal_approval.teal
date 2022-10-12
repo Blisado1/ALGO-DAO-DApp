@@ -397,7 +397,7 @@ int 1
 return
 main_l14:
 txn Note
-byte "algodaoproposal:uv02"
+byte "algodaoproposal:uv03"
 ==
 txn NumApplications
 int 1
@@ -408,7 +408,7 @@ txna Applications 1
 app_opted_in
 &&
 txna Applications 1
-int 114731548
+int 115840105
 ==
 &&
 txn NumAppArgs
@@ -430,7 +430,7 @@ byte "LOCKED"
 callsub readAppState_0
 store 0
 txna Applications 1
-byte "AVAILABLE"
+byte "CONTRIBUTIONS"
 callsub readAppState_0
 store 1
 load 0
