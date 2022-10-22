@@ -45,6 +45,8 @@ class Proposal_Contract:
                         Txn.accounts.length() == Int(1),
                         # check that the amount is greater than 1 algo
                         Btoi(Txn.application_args[1]) >= Int(1000000),
+                        # Checks if name is valid
+                        Len(Txn.application_args[0]) > Int(0),
                     )
                 ),
                 locked_funds.store(readAppState(Txn.applications[1], Bytes("LOCKED"))),
